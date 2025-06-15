@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from typing import Final
+import re
 
 from ten_utils.log import LoggerConfig
 from ten_utils.env_loader import EnvLoader
@@ -46,4 +48,21 @@ API_CORS_ALLOW_CREDENTIALS = env_loader.load("API_CORS_ALLOW_CREDENTIALS", bool)
 # log
 LoggerConfig().set_default_level_log(
     env_loader.load("LOG_LEVEL", int)
+)
+
+# validators
+VALIDATOR_NAME_FORBIDDEN_WORDS: Final[set[str]] = {
+    "buy now", "free", "visit", "download", "porn", "xxx", "casino",
+    "http", "https", "www", ".com", ".ru", ".net", "@"
+}
+VALIDATOR_NAME_ILLEGAL_PATTERN: Final[re.Pattern] = re.compile(
+    r"(http[s]?://\S+|www\.\S+|\S+@\S+|<[^>]+>|[\[\]{}$%^&*<>\\|~]|\.com|\.ru|\.net)",
+    re.IGNORECASE
+)
+VALIDATOR_NAME_CLEAN_PATTERN: Final[re.Pattern] = re.compile(
+    r"(http[s]?://\S+|www\.\S+|\S+@\S+|<[^>]+>)",
+    re.IGNORECASE
+)
+VALIDATOR_NAME_ALPHABET_PATTERN: Final[re.Pattern] = re.compile(
+    r"^[a-zA-Z0-9\s\-\.,!?']+$"
 )
